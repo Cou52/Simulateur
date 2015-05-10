@@ -21,6 +21,8 @@ public class Body {
     public Spatial representation;
     public float radiussize;
     public boolean udapte = false;
+    
+    public boolean highQuality = false; ;
  
 public Body(Vector3f pPosition)
 {   

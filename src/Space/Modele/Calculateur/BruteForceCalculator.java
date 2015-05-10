@@ -130,9 +130,12 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
             for (int i = 0; i < bodies.length; i++) 
             {
                 
-                  bodies[i].update(dt);
-                  buffer[i] = new Body(new Vector3f(bodies[i].position) ,new Vector3f(bodies[i].speed) ,  bodies[i].mass);
-                  bodies[i].resetForce();
+                     bodies[i].update(dt);
+                     buffer[i] = new Body(new Vector3f(bodies[i].position) ,new Vector3f(bodies[i].speed) ,  bodies[i].mass);
+                     bodies[i].resetForce();
+                     buffer[i].highQuality = bodies[i].highQuality;
+                     buffer[i].representation =  bodies[i].representation;
+                
             }
              bufferBody frame = new bufferBody(buffer);
              memoireDernierCalcule.setNextBuffer(frame);

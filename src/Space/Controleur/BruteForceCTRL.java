@@ -17,7 +17,7 @@ public class BruteForceCTRL implements CTRLInterface{
     
     public BruteForceCTRL()
     {   
-        calculateur = new BruteForceCalculator(32768);
+        calculateur = new BruteForceCalculator(15000);
     }    
     public void requestNewFrame()
     {

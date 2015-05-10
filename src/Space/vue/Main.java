@@ -189,18 +189,21 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
         Body buffer[] = new Body[bodies.length];
         for (int i = 1 ;i < bodies.length  ; i++)
         {                         
+                bodies[i].highQuality = true;
                 sphereRepresentation(bodies[i].position , bodies[i] );    
                 buffer[i] = new Body(bodies[i].position , bodies[i].speed, bodies[i].mass);
                 buffer[i].representation =  bodies[i].representation;
+                buffer[i].highQuality = true;
         }
 
         sphereRepresentationBlack(bodies[0].position ,  bodies[0]);
         
          buffer[0] = new Body(bodies[0].position , bodies[0].speed, bodies[0].mass);
-        buffer[0].representation =  bodies[buffer.length -1].representation;
+         buffer[0].representation =  bodies[buffer.length -1].representation;
                 //buffer[buffer.length -1] = new Body(bodies[buffer.length -1].position , bodies[buffer.length -1].speed, bodies[buffer.length -1].mass);
                 //buffer[buffer.length -1].representation =  bodies[buffer.length -1].representation;
-        
+         bodies[0].highQuality = true;
+         buffer[0].highQuality = true;
         Geometry geo = new Geometry("OurMesh", mesh);
         mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(verticle));
         //calulateur.StartCalculateur();
@@ -254,13 +257,16 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
                    Body[] allbody = currentFrame.getBodys();
                    //La grosse phere noire
                    sphereRepresentationBlack(allbody[0].getPosition() , allbody[0]);
+                  
                     for (int i = 1 ;i < allbody.length ; i++)
                     {                         
-                         sphereRepresentation(allbody[i].getPosition() , allbody[i] );   
+                       
+                        sphereRepresentation(allbody[i].getPosition() , allbody[i] );   
                         
                     }
                      mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(verticle));
-                      mesh.updateBound();
+                     mesh.updateBound();
+                     
                     double frame = 1000 / (System.currentTimeMillis() - lastTimeFrampe) ;
                      if (time < 20000)
                      {
@@ -310,39 +316,33 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
     public void sphereRepresentation(Vector3f position , Body b)
     {
        //System.out.println(position);
-       if(b.representation == null)
-       {
+      
             
-           if  (mode.equals(JPanelInterface.BRUTE_FORCE_GRAVITE))
+           if  ( b.highQuality)
            {
-                /*
-                Sphere mass1 = new Sphere(10, 10, 0.3f, true , true);
-                Spatial yellow = new Geometry("", mass1);
-                Material mat1 = new Material(assetManager, 
-                        "Common/MatDefs/Misc/Unshaded.j3md");
-                 mat1.setColor("Color", ColorRGBA.randomColor());
-                  yellow.setLocalTranslation(position);
-                yellow.setMaterial(mat1);
-                b.representation = yellow;
-                pivot.attachChild(yellow);
-                */
-                verticle[itera] = position;
-                 itera++;
+                if (b.representation == null)
+                {
+                    Sphere mass1 = new Sphere(10, 10, 0.3f, true , true);
+                    Spatial yellow = new Geometry("", mass1);
+                    Material mat1 = new Material(assetManager, 
+                            "Common/MatDefs/Misc/Unshaded.j3md");
+                    mat1.setColor("Color", ColorRGBA.randomColor());
+                    yellow.setLocalTranslation(position);
+                    yellow.setMaterial(mat1);
+                    b.representation = yellow;
+                    pivot.attachChild(yellow);
+                }
+                else
+                 {   
+                     b.representation.setLocalTranslation(position);
+                 }
            }
            else
             { 
                   verticle[itera] = position;
                   itera++;
             }  
-         
-   
-        }
-       else
-        {
-           //System.out.println("modification");
-            b.representation.setLocalTranslation(position);
-        }
-        
+  
     }
   /** Custom Keybinding: Map named actions to inputs. */
   private void initKeys() {

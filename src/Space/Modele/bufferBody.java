@@ -28,6 +28,7 @@ public class bufferBody {
             retour[i] = new Body(bodies[i].getPosition() ,bodies[i].getSpeed() , bodies[i].force , bodies[i].mass );   
             retour[i].representation = bodies[i].representation;
             retour[i].radiussize =  bodies[i].radiussize;
+            retour[i].highQuality =  bodies[i].highQuality;
         }
         return retour;
     }
