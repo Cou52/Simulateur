@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Space.vue;
+package Space.vue.Camera;
 
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
@@ -158,6 +158,8 @@ public class MainCamera {
     public void setWait(int wait) {
         this.wait = wait;
     }
+    
+    
     public void addPolar(double deltapolar)
     {
         this.setAnglePolair(this.getAnglePolair() + deltapolar);

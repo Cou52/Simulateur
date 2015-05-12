@@ -18,12 +18,20 @@ public class BruteForceCTRL implements CTRLInterface{
     public BruteForceCTRL()
     {   
         calculateur = new BruteForceCalculator(15000);
-    }    
+    } 
+      public BruteForceCTRL(int nombreParticule)
+    {   
+        calculateur = new BruteForceCalculator(nombreParticule);
+    }  
     public void requestNewFrame()
     {
         calculateur.requestNewFrame();
     }
-    
+    public void ChangerNombreParticuleCalculateur(int nombre)
+    { 
+        stopCalculateur();
+        calculateur.ChangerNombreParticule(nombre);
+    }
     public Body[] getBodies()
     {  
         Body[] retour = null;
@@ -68,6 +76,11 @@ public class BruteForceCTRL implements CTRLInterface{
         calculateur.memoire = new bufferBody(buffer);
         calculateur.memoireDernierCalcule = calculateur.memoire;
     }
+    public void viderCalculateur()
+    {  
+        calculateur.memoire = null;
+        calculateur.memoireDernierCalcule = null;
+    }    
     public void stopCalculateur()
      {
          calculateur.roule =false;

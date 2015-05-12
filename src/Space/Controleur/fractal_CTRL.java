@@ -20,7 +20,12 @@ public class fractal_CTRL implements CTRLInterface {
      * 
      */
     fractal_triangle_mainCalculator calculateur;
-   
+  
+    //A faire
+    public void ChangerNombreParticuleCalculateur(int nombre)
+    {
+     // TODO finir cette methode
+    } 
     public fractal_CTRL()
     {   
         calculateur = new fractal_triangle_mainCalculator( 3000000, new Vector3f(0 ,0 ,0) ,100);

@@ -2,7 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Space.vue;
+package Space.vue.Camera;
+
+import Space.vue.Main;
 
 /**
  *

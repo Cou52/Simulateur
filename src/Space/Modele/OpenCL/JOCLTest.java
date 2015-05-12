@@ -20,7 +20,7 @@ import org.jocl.cl_kernel;
 import org.jocl.cl_mem;
 import org.jocl.cl_platform_id;
 import org.jocl.cl_program;
-;
+import javax.swing.event.EventListenerList;
 
 
 
@@ -48,7 +48,7 @@ public class JOCLTest implements Runnable
         cl_command_queue commandQueue;
         cl_kernel kernel;
         cl_program program;
-         public ArrayList<BruteForceListener> listListenner = new ArrayList<BruteForceListener>();;
+         public EventListenerList  listListenner   = new EventListenerList();;
         public static int local_size = 256;
     
    private static String franctalTriangle = ""
@@ -110,7 +110,7 @@ public class JOCLTest implements Runnable
             + "     float dy = b[i] - ythis;"
             + "     float dz = c[i] - zthis;"
             + "     float dis = sqrt((dx * dx) + (dy * dy) + (dz * dz) ); "
-            + "     float f = (G * mass[gid] * mass[i] ) / (dis*dis + 1.0f)    ;"
+            + "     float f = (G * mass[gid] * mass[i] ) / (dis*dis + 2.0f)    ;"
             + "      "
             + "     ix += (f * dx / dis) ; "
             +       "" 
@@ -148,7 +148,7 @@ public class JOCLTest implements Runnable
             + " int thisKernel =  nbKernel[0] ;"
             + "                   "  
             + " float G = 6.673e-11;"
-            + " int nb= bnarticule[0];"
+            + " float nb= bnarticule[0];"
             + " int thisParticule = gid + (thisKernel *  (nb / totalKernel[0]) );"
             + " "
             + "  float xthis = a[thisParticule];"
@@ -192,11 +192,14 @@ public class JOCLTest implements Runnable
             + "     float dz = Z[i] - zthis;"
             + "     float dis = sqrt((dx * dx) + (dy * dy) + (dz * dz) ); "
             + "     float f = (G * masse * M[i] ) / (dis*dis + 0.25f)    ;"
-            + "      "
-            + "     ix += (f * dx / dis) ; "
+            + "     if (dis == 0){"
+            + "      dis = 0.01f;"
+            + "} "
+            + " "
+            + "     ix += f * dx / (dis +(0.01f)) ; "
             +       "" 
-            + "     iy += f * dy / dis ;"
-            + "     iz += f * dz / dis;"
+            + "     iy += f * dy / (dis +(0.01f)) ;"
+            + "     iz += f * dz /(dis +(0.01f));"
     + "                 } "
     + "             }"
             + "barrier(CLK_LOCAL_MEM_FENCE);"
@@ -206,7 +209,7 @@ public class JOCLTest implements Runnable
            
             + "                           "
             + "  } "
-            + "d[droit] = ix;"
+            + "d[droit] =  ix;"
               + "d[droit + 1] = iy;"
               + "d[droit + 2] = iz;"
             + "                   "
@@ -219,12 +222,14 @@ public class JOCLTest implements Runnable
      
      public void addBruteForceListener(BruteForceListener listener)
      {
-         listListenner.add(listener);
+         listListenner.add(BruteForceListener.class ,listener);
      }
-     
+      public BruteForceListener[] getBruteForceListener() {
+        return listListenner.getListeners(BruteForceListener.class);
+    }
      public void finishN2()
      {  
-           for(BruteForceListener listener : listListenner) {
+           for(BruteForceListener listener : getBruteForceListener()) {
                 listener.TerminerOpenCl(this);
             }
      }
@@ -347,9 +352,17 @@ public class JOCLTest implements Runnable
                 Vector3f v = bodies[i].getPosition();
                 srcArrayA[i] =  v.x;
                 srcArrayB[i] =  v.y;
-                srcArrayC[i] =  v.z;
+                 srcArrayC[i] =  v.z ;
+                if( i == 1)
+                   {  
+                        // srcArrayC[i] =  v.z + 0.5f ;
+                   }  
+               
                 scrMass[i] =  (float)bodies[i].getMass();
-                //System.out.println(scrMass[i]);
+                if( nb == 150)
+                { 
+                   //System.out.println( bodies[i].getPosition());
+                }
         }
   
   
@@ -484,14 +497,16 @@ public class JOCLTest implements Runnable
                 bodies[i].force.x = dstArray[i * 3  ];
                 bodies[i].force.y = dstArray[i * 3 + 1];
                 bodies[i].force.z = dstArray[i * 3  + 2];
-              if (id == 1)
-              {   
+                 if( nb == 150)
+                { 
+                  System.out.println("Result:" + i +  " " +  bodies[i].force);
+                }
                    // System.out.println("Result:" + i +  " " +  bodies[i].force);
-               }
+               
              }
         
          
-         //System.out.println("time: "+ ( System.currentTimeMillis() - debut));  
+         
          finishN2();
         
     }

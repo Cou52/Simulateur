@@ -1,10 +1,11 @@
 package Space.vue;
 
+import Space.vue.Camera.ListenerClass;
+import Space.vue.Camera.MainCamera;
 import Space.Controleur.CTRLInterface;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
-import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.KeyTrigger;
@@ -13,9 +14,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.scene.shape.Box;
-import com.jme3.scene.Geometry;
-import com.jme3.material.Material;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.MouseButtonTrigger;
@@ -24,7 +22,6 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.input.ChaseCamera;
 import com.jme3.math.Ray;
 import com.jme3.scene.Spatial;
-import Space.Modele.Calculateur.BruteForceCalculator;
 import Space.Controleur.BruteForceCTRL;
 import Space.Controleur.fractal_CTRL;
 import Space.Modele.bufferBody;
@@ -64,7 +61,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
   private Geometry mark;
   private Node pivot;     
   private ChaseCamera chaseCam;
-  private CTRLInterface calulateur;
+  public CTRLInterface calulateur;
   private ListenerClass doubleclick ;
   private bufferBody currentFrame;
   private float frametime = 0.008f;
@@ -90,7 +87,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
   public void simpleInitApp() {
       doubleclick = new ListenerClass(this);
       
-      bruteForce();
+      bruteForce(150);
   }
   public void fractal_Triangle()
   {
@@ -160,34 +157,11 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
         
         viewPort.setBackgroundColor(ColorRGBA.LightGray);
   }
-  public void bruteForce()
+  
+  public void  fistBuffer()
   { 
-         Oeil = new MainCamera();
-        Oeil.setPointObservation(new Vector3f(0 ,0, 0));
-          verticle = new Vector3f[600000];
-       itera = 0;
-        Oeil.gettwoAngle(cam.getLocation(), Oeil.getPointObservation());  
-        cam.setLocation(Oeil.getPositionActuel());
-        Oeil.setRayon(50);
-        initMark();
-        initKeys();
-      
-        mode = JPanelInterface.BRUTE_FORCE_GRAVITE;
-        pivot = new Node("pivot");
-       
-        calulateur = new BruteForceCTRL();
-        calulateur.init();
-          rootNode.attachChild(pivot);
-        Body bodies[] = calulateur.getBodies();
-        frameperSecond = new BitmapText(guiFont, false);
-        frameperSecond.setSize(guiFont.getCharSet().getRenderedSize());
-        frameperSecond.setLocalTranslation(100, 700, 0);
-        frameperSecond.setText("t"); // crosshairs
-
-        frameperSecond.setColor(ColorRGBA.Blue);
-        
-        guiNode.attachChild(frameperSecond);
-        Body buffer[] = new Body[bodies.length];
+       Body bodies[] = calulateur.getBodies(); 
+      Body buffer[] = new Body[bodies.length];
         for (int i = 1 ;i < bodies.length  ; i++)
         {                         
                 bodies[i].highQuality = true;
@@ -206,6 +180,36 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
                 //buffer[buffer.length -1].representation =  bodies[buffer.length -1].representation;
          bodies[0].highQuality = true;
          buffer[0].highQuality = true;
+           calulateur.bufferise(buffer);
+  }       
+  public void bruteForce(int nombre)
+  { 
+         Oeil = new MainCamera();
+        Oeil.setPointObservation(new Vector3f(0 ,0, 0));
+          verticle = new Vector3f[600000];
+       itera = 0;
+        Oeil.gettwoAngle(cam.getLocation(), Oeil.getPointObservation());  
+        cam.setLocation(Oeil.getPositionActuel());
+        Oeil.setRayon(50);
+        initMark();
+        initKeys();
+      
+        mode = JPanelInterface.BRUTE_FORCE_GRAVITE;
+        pivot = new Node("pivot");
+       
+        calulateur = new BruteForceCTRL(nombre);
+        calulateur.init();
+          rootNode.attachChild(pivot);
+        frameperSecond = new BitmapText(guiFont, false);
+        frameperSecond.setSize(guiFont.getCharSet().getRenderedSize());
+        frameperSecond.setLocalTranslation(100, 700, 0);
+        frameperSecond.setText("t"); // crosshairs
+
+        frameperSecond.setColor(ColorRGBA.Blue);
+        
+    
+         fistBuffer();
+     
         Geometry geo = new Geometry("OurMesh", mesh);
         mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(verticle));
         //calulateur.StartCalculateur();
@@ -218,7 +222,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
         mat.setColor("Color", ColorRGBA.Blue);
         geo.setMaterial(mat);
         rootNode.attachChild(geo);
-        calulateur.bufferise(buffer);
+      
       
         rootNode.attachChild(frameperSecond);
         calulateur.StartCalculateur();
@@ -383,11 +387,11 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
        
             
       }
-        System.out.println(name);
+      
       if (name.equals("stop"))
       {   
          
-           System.out.println("t");
+           
           calulateur.stopCalculateur();
            
           
@@ -395,7 +399,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
       }
       if (name.equals("start"))
       { 
-          System.out.println("1");
+        
           calulateur.StartCalculateur();
       }
     }
@@ -421,8 +425,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
          }              
          if (name.equals("rotation")) 
          {                             
-                 System.out.println(Xmouse);
-                 System.out.println(Ymouse);
+                 
              deplacerRotation( 0.0 , 0.800f * tpf ,new Vector3f(0 ,0 ,0));
          }  
          if(name.equals("rotationR"))

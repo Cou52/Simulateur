@@ -42,10 +42,18 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
         }   
      
     }
-    
+    public void ChangerNombreParticule(int nombreParticule)
+    { 
+         bodies = new Body[nombreParticule];
+        init();
+        
+    } 
+         
     public  BruteForceCalculator(int nombreParticule)
     {        
         bodies = new Body[nombreParticule];
+       init();
+       
     }
     public void init()
     {
@@ -105,6 +113,7 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
         partirLesThread();
         while (roule != false)
         {    
+              
                if (memoire.getNumberBufferAfterHim() < maxBuffer) //System.out.println(memoire.getNumberBufferAfterHim());
                 { 
                     synchronized(this)
