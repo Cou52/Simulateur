@@ -195,7 +195,7 @@ public class MainCamera {
     public void deplacerRotation(double deltaPolar ,double deltaAzimuthal )
     {    
 
-        if (wait > 10)
+        if (wait > 0)
         { 
             this.addPolar(deltaPolar);
             this.addAngleAzimuthal(deltaAzimuthal);

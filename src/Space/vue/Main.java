@@ -89,6 +89,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
   @Override
   public void simpleInitApp() {
       doubleclick = new ListenerClass(this);
+      
       bruteForce();
   }
   public void fractal_Triangle()
@@ -196,8 +197,9 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
                 buffer[i].highQuality = true;
         }
 
-        sphereRepresentationBlack(bodies[0].position ,  bodies[0]);
-        
+         sphereRepresentationBlack(bodies[0].position ,  bodies[0]);
+         //chaseCam =  new  ChaseCamera(cam ,bodies[0].representation,inputManager);
+         //chaseCam.setSmoothMotion(true);
          buffer[0] = new Body(bodies[0].position , bodies[0].speed, bodies[0].mass);
          buffer[0].representation =  bodies[buffer.length -1].representation;
                 //buffer[buffer.length -1] = new Body(bodies[buffer.length -1].position , bodies[buffer.length -1].speed, bodies[buffer.length -1].mass);
@@ -221,6 +223,8 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
         rootNode.attachChild(frameperSecond);
         calulateur.StartCalculateur();
          viewPort.setBackgroundColor(ColorRGBA.LightGray);
+          deplacerRotation(0.5f, 0.5f ,Oeil.getPointObservation() );
+ 
        
   }      
   public void removeAll()
@@ -367,6 +371,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
     inputManager.addListener(analogListener, "rotationR");
     inputManager.addListener(analogListener, "ZoomIn");
     inputManager.addListener(analogListener, "ZoomOut");
+
   }
  private ActionListener actionListener = new ActionListener() {
     public void onAction(String name, boolean keyPressed, float tpf) {
@@ -398,29 +403,34 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
   private AnalogListener analogListener = new AnalogListener() {
     public void onAnalog(String name, float value, float tpf) 
     { 
-    
-         
+        float Xmouse = inputManager.getCursorPosition().x;
+        float Ymouse = inputManager.getCursorPosition().y;
+        
+   
+        
          if(name.equals("ZoomIn"))
          {
-             Oeil.setRayon(Oeil.getRayon() - 3000.0 * tpf);
+             Oeil.setRayon(Oeil.getRayon() - (30.00f * tpf));
              deplacerRotation(0.0 , 0.0 ,new Vector3f(0 ,0 ,0));
          }
          if(name.equals("ZoomOut"))
          {
-             Oeil.setRayon(Oeil.getRayon() +  3000.0 * tpf);
+             Oeil.setRayon(Oeil.getRayon() +  (30.00f  * tpf));
              deplacerRotation(0.0 , 0.0 ,new Vector3f(0 ,0 ,0));
            
          }              
          if (name.equals("rotation")) 
          {                             
-            deplacerRotation( 0.0 , 30 * tpf ,new Vector3f(0 ,0 ,0));
+                 System.out.println(Xmouse);
+                 System.out.println(Ymouse);
+             deplacerRotation( 0.0 , 0.800f * tpf ,new Vector3f(0 ,0 ,0));
          }  
          if(name.equals("rotationR"))
          { 
-            deplacerRotation(  30 * tpf, 0.0 ,new Vector3f(0 ,0 ,0));
+            deplacerRotation(  0.800f * tpf, 0.0 ,new Vector3f(0 ,0 ,0));
          }  
        
-         
+        
     }
   };
   
@@ -464,7 +474,10 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
   {    
         Oeil.deplacerRotation(deltaPolar ,deltaAzimuthal );
         cam.setLocation(Oeil.getPositionActuel());
-        cam.lookAt(Oeil.getPointObservation(), Oeil.getVecteurUP());        
+        cam.lookAt(Oeil.getPointObservation(), Oeil.getVecteurUP());    
+        cam.update();
+        //chaseCam.setLookAtOffset(Oeil.getPointObservation());
+      
   }    
    /** A red ball that marks the last spot that was "hit" by the "shot". */
   protected void initMark() {
