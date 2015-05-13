@@ -1,0 +1,8 @@
+New:
+-Peut changer le nombre de particule
+-Particule sont plus beau
+-Meilleur mouvement de la camera
+
+Bug corrigé:
+-crash du simulateur lorsque le nombre de particule n'était pas un multiple de 256
+-Simulateur qui ne pard plus apres plusieurs arret/repart
