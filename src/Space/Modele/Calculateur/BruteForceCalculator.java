@@ -7,7 +7,9 @@ package Space.Modele.Calculateur;
 import Space.Modele.Body;
 import Space.Modele.bufferBody;
 import Space.Modele.OpenCL.JOCLTest;
+import Space.Controleur.Interface.CalculatorListener;
 import com.jme3.math.Vector3f;
+import javax.swing.event.EventListenerList;
 
 /**
  *
@@ -17,6 +19,7 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
     public bufferBody memoire ;
     public bufferBody memoireDernierCalcule ;
     public boolean roule = false;
+    private boolean isStopped = false;
     public Body bodies[];
     public  JOCLTest openCl[];
     public int maxBuffer = 10;
@@ -24,6 +27,7 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
     public int nbThreadFinish = 0;
     public  boolean threadFini = false;
     public float dt = 0.016f;
+    public EventListenerList  listListenner   = new EventListenerList();
     
     public void Terminer(BruteForceTread currentTread)
     {
@@ -42,12 +46,30 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
         }   
      
     }
+    
+    public void addCalculatorListenerListener(CalculatorListener listener)
+     {
+         listListenner.add(CalculatorListener.class ,listener);
+     }
+      
+    public CalculatorListener[] getCalculatorListenerListener() {
+        return listListenner.getListeners(CalculatorListener.class);
+    }
+      
+    @Deprecated 
     public void ChangerNombreParticule(int nombreParticule)
     { 
          bodies = new Body[nombreParticule];
         init();
         
     } 
+    
+     private void hasStop()
+     {  
+           for(CalculatorListener listener : getCalculatorListenerListener()) {
+                listener.CalculateurHasStopped(this);
+            }
+     }
          
     public  BruteForceCalculator(int nombreParticule)
     {        
@@ -105,11 +127,14 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
            InitialiserThreadOpenCl();
        }
       
-             
-    
+    public boolean IsStooped()
+    {        
+        return isStopped;
+    } 
     public void run()
     { 
-         System.out.println("3");
+        isStopped = false;
+        System.out.println("3");
         partirLesThread();
         while (roule != false)
         {    
@@ -130,7 +155,9 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
                     }
                 }  
           }
-        
+         isStopped = true;
+        hasStop();
+         
          System.out.println("die");
     }   
     public void miseAjour()

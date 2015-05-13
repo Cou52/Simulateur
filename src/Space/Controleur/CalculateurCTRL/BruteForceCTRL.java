@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Space.Controleur;
+package Space.Controleur.CalculateurCTRL;
 
+import Space.Controleur.Interface.CTRLInterface;
+import Space.Controleur.Interface.CalculatorListener;
 import Space.Modele.bufferBody;
 import Space.Modele.Calculateur.BruteForceCalculator;
 import Space.Modele.Body;
@@ -11,14 +13,16 @@ import Space.Modele.Body;
  *
  * @author cou8 Controleur du bruteForceCalculateuré
  */
-public class BruteForceCTRL implements CTRLInterface{
+public class BruteForceCTRL implements CTRLInterface ,CalculatorListener{
     
     BruteForceCalculator calculateur;
+    private boolean requestChangeQuality;
     
     public BruteForceCTRL()
     {   
         calculateur = new BruteForceCalculator(15000);
     } 
+      
       public BruteForceCTRL(int nombreParticule)
     {   
         calculateur = new BruteForceCalculator(nombreParticule);
@@ -26,6 +30,33 @@ public class BruteForceCTRL implements CTRLInterface{
     public void requestNewFrame()
     {
         calculateur.requestNewFrame();
+    }
+    public void  CalculateurHasStopped(BruteForceCalculator cal)
+    {   
+        if (requestChangeQuality)
+        {  
+            
+        }   
+    } 
+    
+    private void changeQualityT(boolean quality)
+    {  
+        for (int i = 0; i < calculateur.bodies.length; i++) 
+        { 
+            calculateur.bodies[i].highQuality = quality;
+        }  
+    }   
+    public void changeQuality(boolean quality)
+    {
+        requestChangeQuality = true;
+        if (calculateur.IsStooped())
+        { 
+            changeQualityT(quality);
+        }
+        else
+        {  
+            stopCalculateur();
+        } 
     }
     public void ChangerNombreParticuleCalculateur(int nombre)
     { 

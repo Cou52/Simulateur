@@ -32,6 +32,8 @@ public class OptionCalculateur extends  JDialog{
      public static String ANNULER_TEXT = "Annuler";
      public static String LABEL_PARTICULE_TEXT = "Nombre de particule";
       public static String LABEL_QUALITY_TEXT = "Qualité graphique";
+      public static String HIGH_QUALITY_TEXT = "élevé";
+       public static String LOW_QUALITY_TEXT = "élevé";
       public static String TITRE = "Options";
     JTextField nombreDeParticule;
     JTextField highQuality;
@@ -46,7 +48,7 @@ public class OptionCalculateur extends  JDialog{
     JLabel vide;
     
     JComboBox quality;
-    String[] qualityStrings = { "élevé", "bas"};
+    String[] qualityStrings = { HIGH_QUALITY_TEXT, LOW_QUALITY_TEXT};
     public JButton Ok;
     public JButton Annuler;
     public OptionCalculateur()

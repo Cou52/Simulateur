@@ -4,7 +4,7 @@
  */
 package Space.vue;
 
-import Space.vue.BoiteDialog.OptionCalculateur;
+
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 import java.awt.Dimension;
@@ -17,10 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JMenuBar;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
+
 
 
 

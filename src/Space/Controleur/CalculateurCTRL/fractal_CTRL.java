@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Space.Controleur;
+package Space.Controleur.CalculateurCTRL;
 
+import Space.Controleur.Interface.CTRLInterface;
 import Space.Modele.Body;
 import Space.Modele.bufferBody;
 import Space.Modele.Calculateur.fractal_triangle_mainCalculator;
@@ -71,7 +72,9 @@ public class fractal_CTRL implements CTRLInterface {
          Thread t = new Thread(calculateur);
          t.start();
      }
-     
+     public void changeQuality(boolean quality)
+    {
+    }
      /**
       *  Cette méthode est utilisé par l'interface graphique pour avoir les objets
       * du calculateur. L'interface graphique va affecter une représentation graphique par la suite.

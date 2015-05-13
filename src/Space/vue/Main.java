@@ -2,7 +2,7 @@ package Space.vue;
 
 import Space.vue.Camera.ListenerClass;
 import Space.vue.Camera.MainCamera;
-import Space.Controleur.CTRLInterface;
+import Space.Controleur.Interface.CTRLInterface;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
@@ -22,10 +22,11 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.input.ChaseCamera;
 import com.jme3.math.Ray;
 import com.jme3.scene.Spatial;
-import Space.Controleur.BruteForceCTRL;
-import Space.Controleur.fractal_CTRL;
+import Space.Controleur.CalculateurCTRL.BruteForceCTRL;
+import Space.Controleur.CalculateurCTRL.fractal_CTRL;
 import Space.Modele.bufferBody;
 import Space.Modele.Body;
+import static Space.vue.BoiteDialog.OptionCalculateur.HIGH_QUALITY_TEXT;
 import com.jme3.font.BitmapText;
  import com.jme3.scene.Mesh;
  import com.jme3.scene.Mesh.Mode;
@@ -157,7 +158,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
         
         viewPort.setBackgroundColor(ColorRGBA.LightGray);
   }
-  
+     
   public void  fistBuffer()
   { 
        Body bodies[] = calulateur.getBodies(); 

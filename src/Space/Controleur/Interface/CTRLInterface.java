@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Space.Controleur;
+package Space.Controleur.Interface;
 
 import Space.Modele.bufferBody;
 import Space.Modele.Body;
@@ -19,6 +19,8 @@ public interface CTRLInterface {
      * Le calculateur va mettre l'image suivante si elle est disponible
      * 
      */
+    public void changeQuality(boolean quality); 
+   
     public void requestNewFrame();
     /**
      * 
