@@ -174,8 +174,11 @@ public class JOCLTest implements Runnable
             + "float ix = 0;"
             + "   float iy = 0;"
             + "   float iz = 0; "
-            + "for(int jb=0; jb < nbP; jb++) {" 
-                
+            + "for(int jb=0; jb < nbP; jb++) {" +
+                "   int maxi = nb -(jb * "+ local_size + "); "
+             +   " if ("+ local_size + " < maxi){"
+            + "       maxi ="+ local_size + " ;  "
+            + "} "
             + "    int pos = jb * "+ local_size + " + ti; "
             + "      X[ti]=a[pos];"
              +       "Y[ti]=b[pos];"
@@ -183,7 +186,7 @@ public class JOCLTest implements Runnable
                  +   "M[ti]=mass[pos];"
             + "      int itera = jb * "+ local_size + "; "
             + "barrier(CLK_LOCAL_MEM_FENCE);"
-            + "     for(int i=0; i < "+ local_size + "; i++) {"
+            + "     for(int i=0; i < maxi; i++) {"
             + "    " 
             + " "
             + "     if ((itera+ i) != thisParticule) {"
@@ -196,10 +199,10 @@ public class JOCLTest implements Runnable
             + "      dis = 0.01f;"
             + "} "
             + " "
-            + "     ix += f * dx / (dis +(0.01f)) ; "
+            + "     ix += f * dx / (dis) ; "
             +       "" 
-            + "     iy += f * dy / (dis +(0.01f)) ;"
-            + "     iz += f * dz /(dis +(0.01f));"
+            + "     iy += f * dy / (dis) ;"
+            + "     iz += f * dz /(dis );"
     + "                 } "
     + "             }"
             + "barrier(CLK_LOCAL_MEM_FENCE);"
@@ -455,9 +458,10 @@ public class JOCLTest implements Runnable
   clSetKernelArg(kernel, 7, 
             Sizeof.cl_mem, Pointer.to(memObjects[7]));
          
-        
+        int nombreT = (nb / nombreThread) + (local_size -(nb%local_size));
+        //System.out.println(nombreT);
         // Set the work-item dimensions
-        long global_work_size[] = new long[]{nb / nombreThread};
+        long global_work_size[] = new long[]{(nombreT)};
         long local_work_size[] = new long[]{local_size};
         debut = System.currentTimeMillis();
       //System.out.println("time1: "+ ( System.currentTimeMillis() - debut));  
@@ -499,7 +503,7 @@ public class JOCLTest implements Runnable
                 bodies[i].force.z = dstArray[i * 3  + 2];
                  if( nb == 150)
                 { 
-                  System.out.println("Result:" + i +  " " +  bodies[i].force);
+                  //System.out.println("Result:" + i +  " " +  bodies[i].force);
                 }
                    // System.out.println("Result:" + i +  " " +  bodies[i].force);
                

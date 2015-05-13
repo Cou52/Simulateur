@@ -87,7 +87,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
   public void simpleInitApp() {
       doubleclick = new ListenerClass(this);
       
-      bruteForce(150);
+      bruteForce(2500);
   }
   public void fractal_Triangle()
   {

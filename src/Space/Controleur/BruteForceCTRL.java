@@ -61,7 +61,7 @@ public class BruteForceCTRL implements CTRLInterface{
           if ( calculateur.roule != true)
           {   
                 calculateur.roule = true; 
-                System.out.println("2");
+               
                 Thread t = new Thread(calculateur);
                 t.start();
           }

@@ -113,11 +113,11 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
         partirLesThread();
         while (roule != false)
         {    
-              
+               synchronized(this)
+               {
                if (memoire.getNumberBufferAfterHim() < maxBuffer) //System.out.println(memoire.getNumberBufferAfterHim());
                 { 
-                    synchronized(this)
-                    {
+                   
                          if (threadFini)
                          {    
                              threadFini = false;
@@ -129,7 +129,8 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
                          }
                     }
                 }  
-        }
+          }
+        
          System.out.println("die");
     }   
     public void miseAjour()
