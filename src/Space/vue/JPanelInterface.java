@@ -29,7 +29,7 @@ public class JPanelInterface {
     public static String BRUTE_FORCE_GRAVITE = "brute force";
     public static String FRACTAL_TRIANGLE = "Fractal triangle";
     public static String OPTION_GENERAL = "Option";
-    public static String Version = "Simulateur 0.0.1";
+    public static String Version = "Simulateur 0.1.2";
     public Main JMonkeyInnterface;
     public JPanel MainCanvas;
     public JPanel panneauNord;

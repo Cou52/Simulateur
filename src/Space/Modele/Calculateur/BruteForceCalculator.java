@@ -49,6 +49,7 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
     
     public void addCalculatorListenerListener(CalculatorListener listener)
      {
+        System.out.println("T3.05");  
          listListenner.add(CalculatorListener.class ,listener);
      }
       
@@ -64,23 +65,32 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
         
     } 
     
+    /**
+     * Cette méthode est apppelé quand le calculateur se met en arret. 
+     * Cette méthode permet d'etre sur que le calculateur est arreté avant de 
+     * changer les particule
+     * 
+     */
      private void hasStop()
      {  
-           for(CalculatorListener listener : getCalculatorListenerListener()) {
-                listener.CalculateurHasStopped(this);
+        
+         for(CalculatorListener listener : getCalculatorListenerListener()) {
+              
+             listener.CalculateurHasStopped(this);
             }
      }
          
     public  BruteForceCalculator(int nombreParticule)
     {        
         bodies = new Body[nombreParticule];
-       init();
+        init();
+      
        
     }
     public void init()
     {
      
-          
+        System.out.println("T3.4");    
         Body buffer[] = new Body[bodies.length];
         bodies[0] = new Body(new Vector3f (0, 1 ,0) ,new Vector3f (0, 0 ,0) , 4 * 10e12f);
         buffer[0] = new Body(new Vector3f (0, 1 ,0) ,new Vector3f (0, 0 ,0) , 4 * 10e12f);
@@ -122,6 +132,7 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
                     }
                 }
            }
+        
            memoire = new bufferBody(buffer);
            memoireDernierCalcule = memoire;
            InitialiserThreadOpenCl();
@@ -140,8 +151,8 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
         {    
                synchronized(this)
                {
-               if (memoire.getNumberBufferAfterHim() < maxBuffer) //System.out.println(memoire.getNumberBufferAfterHim());
-                { 
+                    if (memoire.getNumberBufferAfterHim() < maxBuffer) //System.out.println(memoire.getNumberBufferAfterHim());
+                    { 
                    
                          if (threadFini)
                          {    
@@ -153,9 +164,10 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
 
                          }
                     }
-                }  
+                } 
+             
           }
-         isStopped = true;
+        isStopped = true;
         hasStop();
          
          System.out.println("die");
@@ -210,7 +222,7 @@ public class BruteForceCalculator  implements Runnable, BruteForceListener{
    }     
    
    public bufferBody frameActuel()
-    {  
-        return memoire; 
-    }
+   {  
+       return memoire; 
+   }
 }

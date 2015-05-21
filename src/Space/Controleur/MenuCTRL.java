@@ -20,15 +20,20 @@ import java.awt.event.ActionEvent;
 
  import Space.Modele.Calculateur.BruteForceCalculator;
 /**
- *
+ *Cette classe permet de partir l'application
  * @author cou8
  */
 public class MenuCTRL {
    
-      JPanelInterface interPrincipal;
-      OptionCalculateur interOption;
-       EcouteurOptionForceBrute listenOptionBrute;
+     /**
+      * Représente l'interface principal
+      */ 
+     JPanelInterface interPrincipal;
+     
+      OptionCalculateur interfaceOptionBrute;
+      EcouteurOptionForceBrute ecouteurOptionBrute;
       Ecouteur listen = new Ecouteur();
+   
     public  MenuCTRL()
     { 
          interPrincipal = new JPanelInterface(); 
@@ -57,7 +62,7 @@ public class MenuCTRL {
              if (source.getText().equals(BRUTE_FORCE_GRAVITE))
                 {    
                     interPrincipal.JMonkeyInnterface.removeAll();
-                    interPrincipal.JMonkeyInnterface.bruteForce(150);
+                    interPrincipal.JMonkeyInnterface.bruteForce(2500 , true);
                 }
                 if (source.getText().equals(FRACTAL_TRIANGLE))
                 {    
@@ -67,9 +72,12 @@ public class MenuCTRL {
                  if (source.getText().equals(OPTION_GENERAL))
                 {    
                        
-                      if (interOption == null)
+                      if (interfaceOptionBrute == null)
                       {
-                        interOption = new OptionCalculateur();   
+                     
+                         interfaceOptionBrute = new OptionCalculateur();
+                         interfaceOptionBrute.nombreDeParticule.setText("" + interPrincipal.JMonkeyInnterface.getNumberOfParticule()); 
+                                
                         ajouterEcouterInterOption();
                       }
                 }
@@ -79,32 +87,58 @@ public class MenuCTRL {
      
      public void ajouterEcouterInterOption()
      {
-         listenOptionBrute = new EcouteurOptionForceBrute();
-         interOption.Annuler.addActionListener(listenOptionBrute);
-         interOption.Ok.addActionListener(listenOptionBrute);
+         ecouteurOptionBrute = new EcouteurOptionForceBrute();
+         interfaceOptionBrute.Annuler.addActionListener(ecouteurOptionBrute);
+         interfaceOptionBrute.Ok.addActionListener(ecouteurOptionBrute);
           System.out.println("la");
      }
      private void menuOptionSelectionner()
      { 
-          int particule = interOption.getNombreParticuleSelectionner();
-          if (particule != -1);
+          int particule = interfaceOptionBrute.getNombreParticuleSelectionner();
+          String sQuality = interfaceOptionBrute.getQuality();
+          
+          boolean quality = false;
+          //TODO, cette classe devrait gérer le calculateur ou JmonkeyInterface devrait avoir des méthode pour y accéder plus facilement
+          if (particule != -1)
           {
-               interPrincipal.JMonkeyInnterface.removeAll();
-               interPrincipal.JMonkeyInnterface.bruteForce(particule);
-          }
+                
+                if (particule != interPrincipal.JMonkeyInnterface.getNumberOfParticule())
+                {
+                 
+                     interPrincipal.JMonkeyInnterface.removeAll();
+                     interPrincipal.JMonkeyInnterface.bruteForce(particule, true);
+                }
+
+                if(sQuality.equals(OptionCalculateur.HIGH_QUALITY_TEXT))
+                { 
+                    quality = true;    
+                }
+                if( quality != interPrincipal.JMonkeyInnterface.getQualityParticule())
+                {   
+
+                     interPrincipal.JMonkeyInnterface.requestChangeQuality(quality);
+                } 
+          }    
+          
      }      
      private class EcouteurOptionForceBrute implements ActionListener  
      {
-            public void actionPerformed(ActionEvent e) {
-             System.out.println("ici");
+         public void actionPerformed(ActionEvent e) 
+         {
+     
             Object source =  e.getSource();
-            if (source.equals(interOption.Ok))
+            if (source.equals(interfaceOptionBrute.Ok))
             {    
-                 menuOptionSelectionner();
-                 interOption.dispose();
-                 interOption = null;
+                menuOptionSelectionner();
+                interfaceOptionBrute.dispose();
+                interfaceOptionBrute = null;
             }
-      }
+            else if (source.equals(interfaceOptionBrute.Annuler))
+            {    
+               interfaceOptionBrute.dispose();
+                interfaceOptionBrute = null;
+            }
+        }
      }
-     }
+ }
 

@@ -17,52 +17,84 @@ public class BruteForceCTRL implements CTRLInterface ,CalculatorListener{
     
     BruteForceCalculator calculateur;
     private boolean requestChangeQuality;
+    private boolean quality = true;
     
     public BruteForceCTRL()
     {   
-        calculateur = new BruteForceCalculator(15000);
+   
+       
+         calculateur = new BruteForceCalculator(15000);
+          calculateur.addCalculatorListenerListener(this);
+  
     } 
-      
-      public BruteForceCTRL(int nombreParticule)
+   
+    public boolean getQualityParticule()
+    { 
+        return quality;
+    }       
+    
+    public BruteForceCTRL(int nombreParticule)
     {   
         calculateur = new BruteForceCalculator(nombreParticule);
+         
+        calculateur.addCalculatorListenerListener(this);
     }  
     public void requestNewFrame()
     {
         calculateur.requestNewFrame();
     }
+    /**
+     * Cette méthode est appelé a chaque fois que le calculateur se met en arret, 
+     * Elle change la qualité des particules s'il y a requette.
+     * @param cal Le calculateur
+     */
     public void  CalculateurHasStopped(BruteForceCalculator cal)
     {   
+       
         if (requestChangeQuality)
         {  
+            changeQualityT(quality);
+            requestChangeQuality = false;
+            StartCalculateur();
+            
             
         }   
     } 
     
+    /**
+     * Cette méthode change la qualité des particules, 
+     * @param quality vrai pour la haute qualité 
+     */
     private void changeQualityT(boolean quality)
     {  
-        for (int i = 0; i < calculateur.bodies.length; i++) 
+        //Pour l'instant la particule zero reste toujour en haute qualité
+        for (int i = 1; i < calculateur.bodies.length; i++) 
         { 
-            calculateur.bodies[i].highQuality = quality;
+            calculateur.bodies[i].highQuality = quality;     
+           
         }  
+         
     }   
-    public void changeQuality(boolean quality)
+    /**
+     * Cette méthode est appelé quand on veut changer la qualité des particule
+     * @param quality vrai pour la haute qualité 
+     */
+    public void requestChangeQuality(boolean quality)
     {
+    
         requestChangeQuality = true;
+        this.quality = quality;
         if (calculateur.IsStooped())
         { 
             changeQualityT(quality);
+            requestChangeQuality = false;
         }
         else
         {  
-            stopCalculateur();
+            stopperCalculateur();
         } 
     }
-    public void ChangerNombreParticuleCalculateur(int nombre)
-    { 
-        stopCalculateur();
-        calculateur.ChangerNombreParticule(nombre);
-    }
+ 
     public Body[] getBodies()
     {  
         Body[] retour = null;
@@ -76,7 +108,14 @@ public class BruteForceCTRL implements CTRLInterface ,CalculatorListener{
            throw new RuntimeException("Ne peut pas accéder au objet quand le calculateur est en éxécution");
         }  
         return retour;
-    }     
+    }  
+    
+    public int GetNumberOfParticule()
+    { 
+    
+        return calculateur.bodies.length;
+        
+    }
     public bufferBody frameActuel()
     {
         return calculateur.frameActuel();
@@ -87,7 +126,7 @@ public class BruteForceCTRL implements CTRLInterface ,CalculatorListener{
     }      
     public void  StartCalculateur()
     { 
-          System.out.println("1.5"); 
+    
         //don't start if  already running
           if ( calculateur.roule != true)
           {   
@@ -112,9 +151,10 @@ public class BruteForceCTRL implements CTRLInterface ,CalculatorListener{
         calculateur.memoire = null;
         calculateur.memoireDernierCalcule = null;
     }    
-    public void stopCalculateur()
+    public void stopperCalculateur()
      {
          calculateur.roule =false;
+     
      }
     
     

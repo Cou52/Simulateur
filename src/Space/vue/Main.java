@@ -3,6 +3,7 @@ package Space.vue;
 import Space.vue.Camera.ListenerClass;
 import Space.vue.Camera.MainCamera;
 import Space.Controleur.Interface.CTRLInterface;
+import  Space.vue.Camera.GestionDeplacementCamera;
 import com.jme3.animation.AnimChannel;
 import com.jme3.animation.AnimControl;
 import com.jme3.animation.AnimEventListener;
@@ -11,6 +12,7 @@ import com.jme3.input.MouseInput;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.math.Vector2f;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Sphere;
@@ -58,17 +60,18 @@ import java.awt.FlowLayout;
  */
 public class Main extends SimpleApplication  implements AnimEventListener  {
 
+  public static float SPEED_CAMERA = 0.1f;
   private MainCamera Oeil;
   private Geometry mark;
   private Node pivot;     
   private ChaseCamera chaseCam;
-  public CTRLInterface calulateur;
+  private CTRLInterface calulateur;
   private ListenerClass doubleclick ;
   private bufferBody currentFrame;
   private float frametime = 0.008f;
   private float current = 0;
   Mesh mesh = new Mesh();
-  
+  GestionDeplacementCamera gestionCamera;
   private double lastTimeFrampe =0;
   private int frameTotal = 0;;
   private int time = 0;
@@ -76,6 +79,8 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
   Vector3f verticle[] ;
   int itera = 0;
   public String mode;
+  Geometry geo;
+  private boolean qualityHasChange;
   
   public static void main(String[] args) {
     
@@ -88,7 +93,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
   public void simpleInitApp() {
       doubleclick = new ListenerClass(this);
       
-      bruteForce(2500);
+      bruteForce(2500, true);
   }
   public void fractal_Triangle()
   {
@@ -157,19 +162,22 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
         rootNode.attachChild(geo);
         
         viewPort.setBackgroundColor(ColorRGBA.LightGray);
+        gestionCamera = new GestionDeplacementCamera(SPEED_CAMERA);
+    
   }
      
   public void  fistBuffer()
   { 
-       Body bodies[] = calulateur.getBodies(); 
+      
+      Body bodies[] = calulateur.getBodies(); 
       Body buffer[] = new Body[bodies.length];
         for (int i = 1 ;i < bodies.length  ; i++)
         {                         
-                bodies[i].highQuality = true;
+                bodies[i].highQuality = calulateur.getQualityParticule();
                 sphereRepresentation(bodies[i].position , bodies[i] );    
                 buffer[i] = new Body(bodies[i].position , bodies[i].speed, bodies[i].mass);
                 buffer[i].representation =  bodies[i].representation;
-                buffer[i].highQuality = true;
+                buffer[i].highQuality = calulateur.getQualityParticule();
         }
 
          sphereRepresentationBlack(bodies[0].position ,  bodies[0]);
@@ -183,9 +191,10 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
          buffer[0].highQuality = true;
            calulateur.bufferise(buffer);
   }       
-  public void bruteForce(int nombre)
+  public void bruteForce(int nombre , boolean restart)
   { 
-         Oeil = new MainCamera();
+   
+      Oeil = new MainCamera();
         Oeil.setPointObservation(new Vector3f(0 ,0, 0));
           verticle = new Vector3f[600000];
        itera = 0;
@@ -197,10 +206,13 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
       
         mode = JPanelInterface.BRUTE_FORCE_GRAVITE;
         pivot = new Node("pivot");
+        if (restart)
+        { 
+             calulateur = new BruteForceCTRL(nombre);
+             calulateur.init();
+        }  
        
-        calulateur = new BruteForceCTRL(nombre);
-        calulateur.init();
-          rootNode.attachChild(pivot);
+        rootNode.attachChild(pivot);
         frameperSecond = new BitmapText(guiFont, false);
         frameperSecond.setSize(guiFont.getCharSet().getRenderedSize());
         frameperSecond.setLocalTranslation(100, 700, 0);
@@ -211,7 +223,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
     
          fistBuffer();
      
-        Geometry geo = new Geometry("OurMesh", mesh);
+        geo = new Geometry("OurMesh", mesh);
         mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(verticle));
         //calulateur.StartCalculateur();
         mesh.setMode(Mode.Points);
@@ -226,15 +238,36 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
       
       
         rootNode.attachChild(frameperSecond);
-        calulateur.StartCalculateur();
-         viewPort.setBackgroundColor(ColorRGBA.LightGray);
-          deplacerRotation(0.5f, 0.5f ,Oeil.getPointObservation() );
- 
+      
+        viewPort.setBackgroundColor(ColorRGBA.LightGray);
+        deplacerRotation(0.5f, 0.5f ,Oeil.getPointObservation() );
        
-  }      
+       calulateur.StartCalculateur();
+       gestionCamera = new GestionDeplacementCamera(SPEED_CAMERA);
+       
+  }
+  
+  public void requestChangeQuality(boolean quality)
+  {
+      calulateur.requestChangeQuality(quality);
+      qualityHasChange = true;
+  }
+  
+  public boolean getQualityParticule()
+  { 
+      return calulateur.getQualityParticule();
+  }
+  
+  public int getNumberOfParticule()
+  { 
+      return calulateur.GetNumberOfParticule();
+  }
+      
+          
+  
   public void removeAll()
   { 
-      calulateur.stopCalculateur();
+      calulateur.stopperCalculateur();
       rootNode.detachAllChildren();
   }       
   public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName) {
@@ -251,8 +284,21 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
        
         itera = 0;
        current += tpf;
+      
        if  (frametime <= current)
        {       
+            if (qualityHasChange)
+            { 
+                if (calulateur.getQualityParticule())
+                {
+                     rootNode.detachChild(geo);
+                }
+                else
+                { 
+                    rootNode.attachChild(geo);
+                } 
+                qualityHasChange = false;
+            }
            current =  current - frametime; 
            calulateur.requestNewFrame();
            bufferBody affichage = calulateur.frameActuel();
@@ -273,6 +319,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
                         sphereRepresentation(allbody[i].getPosition() , allbody[i] );   
                         
                     }
+                    
                      mesh.setBuffer(Type.Position, 3, BufferUtils.createFloatBuffer(verticle));
                      mesh.updateBound();
                      
@@ -286,6 +333,7 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
                         }
                       }
                      //System.out.println(itera + "t= " + frame + " :total = " + frameTotal);
+                    
                     frameperSecond.setText("t= " + frame + " :total = " + frameTotal);
                     lastTimeFrampe = System.currentTimeMillis();
                     
@@ -316,8 +364,8 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
         }
        else
         {
-           //System.out.println("modification");
-            b.representation.setLocalTranslation(position);
+           
+           b.representation.setLocalTranslation(position);
         }
         
     }
@@ -343,11 +391,21 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
                 }
                 else
                  {   
+                     if (!pivot.hasChild( b.representation))
+                     {
+                          pivot.attachChild(b.representation);
+                     }
                      b.representation.setLocalTranslation(position);
                  }
            }
            else
             { 
+                  if (b.representation != null)
+                  {
+                       pivot.detachChild(b.representation);
+                        
+                  } 
+                  
                   verticle[itera] = position;
                   itera++;
             }  
@@ -364,7 +422,12 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
     
     inputManager.addMapping("doubleclick" , new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
     inputManager.addMapping("stop" , new KeyTrigger(KeyInput.KEY_P));
-     inputManager.addMapping("start" , new KeyTrigger(KeyInput.KEY_S));
+    inputManager.addMapping("start" , new KeyTrigger(KeyInput.KEY_S));
+    
+    inputManager.addMapping("left" , new KeyTrigger(KeyInput.KEY_A));
+    inputManager.addMapping("right" , new KeyTrigger(KeyInput.KEY_D)); 
+    inputManager.addMapping("forward" , new KeyTrigger(KeyInput.KEY_W));
+    inputManager.addMapping("backward" , new KeyTrigger(KeyInput.KEY_S));
     
     this.flyCam.setEnabled(false);
     inputManager.addListener(actionListener, "doubleclick");
@@ -376,6 +439,11 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
     inputManager.addListener(analogListener, "rotationR");
     inputManager.addListener(analogListener, "ZoomIn");
     inputManager.addListener(analogListener, "ZoomOut");
+    
+      inputManager.addListener(analogListener, "left");
+    inputManager.addListener(analogListener, "right");
+    inputManager.addListener(analogListener, "forward");
+    inputManager.addListener(analogListener, "backward");
 
   }
  private ActionListener actionListener = new ActionListener() {
@@ -390,13 +458,8 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
       }
       
       if (name.equals("stop"))
-      {   
-         
-           
-          calulateur.stopCalculateur();
-           
-          
-         
+      {     
+          calulateur.stopperCalculateur();        
       }
       if (name.equals("start"))
       { 
@@ -433,7 +496,23 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
          { 
             deplacerRotation(  0.800f * tpf, 0.0 ,new Vector3f(0 ,0 ,0));
          }  
-       
+         if(name.equals("left"))
+         { 
+             
+         } 
+         if(name.equals("right"))
+         { 
+             
+         }   
+         if(name.equals("forward"))
+         { 
+             gestionCamera.AvancerCamera(cam);
+         }   
+         if(name.equals("backward"))
+         { 
+             gestionCamera.ReculerCamera(cam);
+         }   
+     
         
     }
   };
@@ -468,6 +547,8 @@ public class Main extends SimpleApplication  implements AnimEventListener  {
           }
            
   }
+  
+          
   /**
    * Permet le déplacement circulaire de la camera autour d'un objet. 
    * @param deltaPolar  le changement de l'anflew Polair +-

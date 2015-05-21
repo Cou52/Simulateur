@@ -52,11 +52,21 @@ public class fractal_CTRL implements CTRLInterface {
     { 
         return calculateur.frameActuel();
     }
+    
+    public boolean getQualityParticule()
+    { 
+        return false;
+    }
+    
+     public int GetNumberOfParticule()
+    { 
+        return calculateur.nombrePoint;
+    }
      /**
      * 
      * Arrete le calulateur 
      */
-    public void stopCalculateur()
+    public void stopperCalculateur()
      {    
      }    
      /**
@@ -72,7 +82,7 @@ public class fractal_CTRL implements CTRLInterface {
          Thread t = new Thread(calculateur);
          t.start();
      }
-     public void changeQuality(boolean quality)
+     public void requestChangeQuality(boolean quality)
     {
     }
      /**

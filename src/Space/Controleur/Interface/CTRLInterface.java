@@ -19,7 +19,10 @@ public interface CTRLInterface {
      * Le calculateur va mettre l'image suivante si elle est disponible
      * 
      */
-    public void changeQuality(boolean quality); 
+    
+    public int GetNumberOfParticule();
+            
+    public void requestChangeQuality(boolean quality); 
    
     public void requestNewFrame();
     /**
@@ -31,17 +34,9 @@ public interface CTRLInterface {
      * 
      * Arrete le calulateur 
      */
-    public void stopCalculateur();
-    
-    @Deprecated
-    /**
-     * Cette méthode peut faire un conflit avec les buffer
-     */
-    public void ChangerNombreParticuleCalculateur(int nombre);
-     /**
-     * Initialise le calculateur, le calulateur initialise par la suite ses objet pour retourner la premiere framme
-     * 
-     */
+    public void stopperCalculateur();
+    public boolean getQualityParticule();
+  
     /**
      * 
      * Pars le calculateur.

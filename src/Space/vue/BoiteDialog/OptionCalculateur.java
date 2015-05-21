@@ -33,10 +33,11 @@ public class OptionCalculateur extends  JDialog{
      public static String LABEL_PARTICULE_TEXT = "Nombre de particule";
       public static String LABEL_QUALITY_TEXT = "Qualité graphique";
       public static String HIGH_QUALITY_TEXT = "élevé";
-       public static String LOW_QUALITY_TEXT = "élevé";
+       public static String LOW_QUALITY_TEXT = "bas";
       public static String TITRE = "Options";
-    JTextField nombreDeParticule;
-    JTextField highQuality;
+    
+    public JTextField nombreDeParticule;
+
     JPanel bas;
     JPanel Millieu;
     JPanel MillieuGauche;
